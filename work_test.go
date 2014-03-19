@@ -9,8 +9,8 @@ import (
 
 var (
     SimpleWorker Worker
-    EchoWork     BusyWork
-    Adder        BusyWork
+    EchoWork     CustomTask
+    Adder        CustomTask
     once         sync.Once
 )
 
@@ -86,7 +86,7 @@ func TestWorkerEquality(t *testing.T) {
 }
 
 func TestBusyWork(t *testing.T) {
-    var bw BusyWork = func(args ...interface{}) (interface{}, error) {
+    var bw CustomTask = func(args ...interface{}) (interface{}, error) {
         return nil, nil
     }
     eRet, eErr := bw()
@@ -105,7 +105,7 @@ func TestEcho1(t *testing.T) {
     var intArr []interface{}
     for i := 1; i < 25; i++ {
         intArr = append(intArr, i)
-        retVal, err := SimpleWorker.Process(EchoWork, intArr...)
+        retVal, err := SimpleWorker.Work(EchoWork, intArr...)
         if err != nil {
             t.Errorf("Unexpected error: [%v]", err)
         }
@@ -119,7 +119,7 @@ func TestEcho2(t *testing.T) {
     var stringArr string
     for i := 1; i < 25; i++ {
         stringArr += "h"
-        retVal, err := SimpleWorker.Process(EchoWork, stringArr)
+        retVal, err := SimpleWorker.Work(EchoWork, stringArr)
         if err != nil {
             t.Errorf("Unexpected error: [%v]", err)
         }
@@ -135,7 +135,7 @@ func TestAdder1(t *testing.T) {
     for i := 1; i < 25; i++ {
         intArr = append(intArr, i)
         sum += i
-        retVal, err := SimpleWorker.Process(Adder, intArr...)
+        retVal, err := SimpleWorker.Work(Adder, intArr...)
         if err != nil {
             t.Errorf("Unexpected error: [%v]", err)
         }
